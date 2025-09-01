@@ -82,6 +82,79 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('citation-list').innerHTML = numberedCitations;
 });
 
+// Blogpost fetching functionality
+async function fetchRSS(url) {
+  const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
+  const data = await response.json();
+  return data.items.map(item => ({
+    title: item.title,
+    link: item.link
+  }));
+}
+
+const mediumFeed = 'https://medium.com/feed/@moefqy';
+const devtoFeed = 'https://dev.to/feed/moefqy';
+const substackFeed = 'https://moefqy.substack.com/feed/';
+
+Promise.all([
+  fetchRSS(mediumFeed),
+  fetchRSS(devtoFeed),
+  fetchRSS(substackFeed)
+]).then(([mediumPosts, devtoPosts, substackPosts]) => {
+  const blogContainer = document.getElementById('blog-posts');
+  const allPosts = [
+    ...mediumPosts.map(post => ({...post, source: 'medium'})),
+    ...devtoPosts.map(post => ({...post, source: 'devto'})),
+    ...substackPosts.map(post => ({...post, source: 'substack'}))
+  ];
+
+  const increment = 5;
+  let visibleCount = increment;
+
+  function renderPosts(count) {
+    let html = '<ul>';
+    allPosts.slice(0, count).forEach(post => {
+      let iconClass = '';
+      if(post.source === 'medium') {
+        iconClass = 'fab fa-medium';
+      } else if(post.source === 'devto') {
+        iconClass = 'fab fa-dev';
+      } else if(post.source === 'substack') {
+        iconClass = 'fas fa-bookmark';
+      }
+      html += `
+      <li><a href="${post.link}" target="_blank"><i class="${iconClass}"></i> ${post.title}</a></li>`;
+    });
+
+    if (count < allPosts.length) {
+      html += `<li><button id="show-more-btn"><i class="fas fa-plus"></i></button></li>`;
+    } else if(allPosts.length > increment) {
+      html += `<li><button id="show-less-btn"><i class="fas fa-minus"></i></button></li>`;
+    }
+    html += '</ul>';
+
+    blogContainer.innerHTML = html;
+
+    const showMoreBtn = document.getElementById('show-more-btn');
+    if (showMoreBtn) {
+      showMoreBtn.addEventListener('click', () => {
+        visibleCount = Math.min(allPosts.length, visibleCount + increment);
+        renderPosts(visibleCount);
+      });
+    }
+
+    const showLessBtn = document.getElementById('show-less-btn');
+    if (showLessBtn) {
+      showLessBtn.addEventListener('click', () => {
+        visibleCount = increment;
+        renderPosts(visibleCount);
+      });
+    }
+  }
+
+  renderPosts(visibleCount);
+});
+
 // Contact form functionality
 const contactForm = document.getElementById('contact-form');
 const contactResult = document.getElementById('contact-result');
