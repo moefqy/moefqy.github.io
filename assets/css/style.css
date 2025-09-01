@@ -97,6 +97,7 @@ h2 {
 .courses,
 .certifications,
 .publications,
+.blogs,
 .contact {
   position: relative;
   padding-top: 20px;
@@ -250,6 +251,45 @@ h2 {
   height: 120px;
   object-fit: contain;
 }
+.blog-container {
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.blog-group {
+  width: auto;
+  vertical-align: top;
+  text-align: center;
+  max-width: 800px;
+}
+.blog-group ul {
+  font-size: var(--font-size-small);
+  list-style: none;
+  padding: 0;
+}
+.blog-group ul li {
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 5px 2px;
+  display: inline-block;
+  width: fit-content;
+}
+.blog-group ul li a {
+  color: var(--text-coloraccent-color);
+  text-decoration: none;
+}
+.blog-group button#show-less-btn,
+.blog-group button#show-more-btn {
+  all:unset;
+}
+.blog-group ul li a i,
+.blog-group button#show-less-btn,
+.blog-group button#show-more-btn {
+  margin: 0px 5px;
+}
 #citation-list {
   font-size: var(--font-size-small);
   line-height: 1.3;
@@ -331,8 +371,11 @@ a:hover,
 }
 .skill-group ul li:hover,
 .course-group ul li:hover,
+.blog-group ul li:hover,
 .download-btn:hover,
 .back-to-top:hover,
+button#show-more-btn:hover,
+button#show-less-btn:hover,
 button[type='submit']:hover {
   background-color: var(--hover-color);
   color: var(--text-color); /* This ensures text remains readable */
